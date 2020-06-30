@@ -34,12 +34,18 @@ services:
       - "./docker_volumes/redis/data:/data"
       - "./docker_volumes/redis/conf:/usr/local/etc/redis"
     expose: ["6379"]
+    networks:
+        farmbotbr:
+            ipv4_address: 10.5.0.5
 
   db:
     env_file: ".env"
     image: postgres:10
     volumes: ["./docker_volumes/db:/var/lib/postgresql/data"]
     # ports: ["5432:5432"]
+    networks:
+        farmbotbr:
+            ipv4_address: 10.5.0.6
 
   web:
     env_file: ".env"
@@ -54,6 +60,9 @@ services:
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -e development
       -p ${API_PORT} -b 0.0.0.0"
     ports: ["${API_PORT}:${API_PORT}"]
+    networks:
+        farmbotbr:
+            ipv4_address: 10.5.0.7
 
   mqtt:
     env_file: ".env"
@@ -62,6 +71,9 @@ services:
     depends_on: ["web"]
     environment: ["RABBITMQ_CONFIG_FILE=/farmbot/farmbot_rmq_config"]
     volumes: ["./docker_volumes/rabbit:/farmbot"]
+    networks:
+        farmbotbr:
+            ipv4_address: 10.5.0.8
 
   parcel:
     env_file: ".env"
@@ -69,12 +81,18 @@ services:
     volumes: [".:/farmbot", "./docker_volumes/bundle_cache:/bundle"]
     command: bundle exec rake api:serve_assets
     ports: ["3808:3808"]
+    networks:
+        farmbotbr:
+            ipv4_address: 10.5.0.9
 
   typescript:
     env_file: ".env"
     image: farmbot_web
     volumes: [".:/farmbot", "./docker_volumes/bundle_cache:/bundle"]
     command: node_modules/typescript/bin/tsc -w --noEmit
+    networks:
+        farmbotbr:
+            ipv4_address: 10.5.0.10
 
   delayed_job:
     env_file: ".env"
@@ -82,6 +100,9 @@ services:
     volumes: [".:/farmbot", "./docker_volumes/bundle_cache:/bundle"]
     depends_on: ["mqtt"]
     command: bundle exec rake jobs:work
+    networks:
+        farmbotbr:
+            ipv4_address: 10.5.0.11
 
   log_digests:
     env_file: ".env"
@@ -89,6 +110,9 @@ services:
     volumes: [".:/farmbot", "./docker_volumes/bundle_cache:/bundle"]
     depends_on: ["mqtt"]
     command: bundle exec rake api:log_digest
+    networks:
+        farmbotbr:
+            ipv4_address: 10.5.0.12
 
   rabbit_jobs:
     stdin_open: true
@@ -98,3 +122,13 @@ services:
     volumes: [".:/farmbot", "./docker_volumes/bundle_cache:/bundle"]
     depends_on: ["mqtt"]
     command: bundle exec rails r lib/rabbit_workers.rb
+    networks:
+        farmbotbr:
+            ipv4_address: 10.5.0.13
+
+networks:
+     farmbotbr:
+       driver: bridge
+       ipam:
+        config:
+          - subnet: 10.5.0.0/16

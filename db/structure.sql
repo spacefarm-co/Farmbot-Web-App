@@ -1365,7 +1365,7 @@ CREATE VIEW public.resource_update_steps AS
             edge_nodes.kind,
             edge_nodes.value
            FROM public.edge_nodes
-          WHERE (((edge_nodes.kind)::text = 'resource_type'::text) AND ((edge_nodes.value)::text = ANY (ARRAY[('"GenericPointer"'::character varying)::text, ('"ToolSlot"'::character varying)::text, ('"Plant"'::character varying)::text])))
+          WHERE (((edge_nodes.kind)::text = 'resource_type'::text) AND ((edge_nodes.value)::text = ANY ((ARRAY['"GenericPointer"'::character varying, '"ToolSlot"'::character varying, '"Plant"'::character varying])::text[])))
         ), resource_id AS (
          SELECT edge_nodes.primary_node_id,
             edge_nodes.kind,
@@ -1731,7 +1731,8 @@ CREATE TABLE public.web_app_configs (
     user_interface_read_only_mode boolean DEFAULT false,
     assertion_log integer DEFAULT 1,
     show_zones boolean DEFAULT false,
-    show_weeds boolean DEFAULT false
+    show_weeds boolean DEFAULT false,
+    display_map_missed_steps boolean DEFAULT false
 );
 
 
@@ -3383,6 +3384,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200323235926'),
 ('20200412152208'),
 ('20200616172612'),
-('20200621012312');
+('20200621012312'),
+('20200623161209');
 
 
