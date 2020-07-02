@@ -4,7 +4,7 @@
 #sudo docker rm $(docker ps -q -a)
 #sudo docker rmi $(docker images -q)
 #sudo docker rmi $(docker images -q)
-rm -rf /Users/ggu329/workspace/spacefarm-bot/Farmbot-Web-App/docker_volumes/*
+#rm -rf /Users/ggu329/workspace/spacefarm-bot/Farmbot-Web-App/docker_volumes/*
 docker-compose run web gem install bundler:2.1.4
 docker-compose run web bundle install
 docker-compose run web npm install
