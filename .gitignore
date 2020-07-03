@@ -1,5 +1,5 @@
 .cache
-.env
+#:w.env
 .vscode
 .idea
 *.log
